@@ -4,6 +4,9 @@ outputs:
   package-name:
     description: Package name
     value: ${{ steps.package-name.outputs.text }}
+  package-dir:
+    description: Package directory
+    value: ${{ steps.package-dir.outputs.text }}
   python-version:
     description: Python version
     value: ${{ steps.python-version.outputs.text }}
@@ -24,6 +27,13 @@ runs:
         regex: ^name *= *\(.*\) *$
         file: setup.cfg
 
+    - name: Get package directory
+      id: package-dir
+      uses: ./.github/actions/find-regex
+      with:
+        regex: ^version *= *attr: \(.*\)\.__version__
+        file: setup.cfg
+
     - name: Get python version
       id: python-version
       uses: ./.github/actions/find-regex
@@ -34,7 +44,7 @@ runs:
     - name: Get package path
       id: package-path
       env:
-        PACKAGE_NAME: ${{ steps.package-name.outputs.text }}
+        PACKAGE_NAME: ${{ steps.package-dir.outputs.text }}
       run: |
         PACKAGE_PATH=${PACKAGE_NAME}/__init__.py
         echo "::set-output name=text::${PACKAGE_PATH}"
@@ -52,6 +62,7 @@ runs:
     - name: Metadata
       run: |
         echo package-name: ${{ steps.package-name.outputs.text }}
+        echo package-dir: ${{ steps.package-dir.outputs.text }}
         echo python-version: ${{ steps.python-version.outputs.text }}
         echo package-path: ${{ steps.package-path.outputs.text }}
         echo package-version: ${{ steps.package-version.outputs.text }}
