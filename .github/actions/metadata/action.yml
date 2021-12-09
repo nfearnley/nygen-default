@@ -31,7 +31,7 @@ runs:
       id: package-dir
       uses: ./.github/actions/find-regex
       with:
-        regex: ^version *= *attr: \(.*\)\.__version__
+        regex: "^version *= *attr: \(.*\)\.__version__"
         file: setup.cfg
 
     - name: Get python version
